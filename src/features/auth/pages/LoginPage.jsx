@@ -8,14 +8,9 @@ const { Title } = Typography;
 
 const LoginPage = () => {
   const navigate = useNavigate();
-
-  // GANTI SELURUH FUNGSI onFinish DENGAN YANG INI
   const onFinish = async (values) => {
     try {
       const response = await login(values);
-
-      // --- PERBAIKAN VALIDASI ROLE ADMIN ---
-      // Akses role melalui 'response.data.user.role'
       if (response.data.user.role !== 'admin') {
         notification.error({
           message: 'Login Gagal',
@@ -23,20 +18,14 @@ const LoginPage = () => {
         });
         return;
       }
-
-      // --- PERBAIKAN SIMPAN TOKEN & REDIRECT ---
-      // Ambil token dari 'response.data.authorization'
-      // Kita hilangkan "Bearer " jika ada, untuk menyimpan token murninya saja
       const token = response.data.authorization.split(' ')[ 1 ] || response.data.authorization;
       localStorage.setItem('token', token);
 
       notification.success({
         message: 'Login Berhasil!',
-        // Ambil nama dari 'response.data.user.name'
         description: `Selamat datang, ${response.data.user.name}!`,
       });
 
-      // Arahkan ke halaman dashboard
       navigate('/');
 
     } catch (error) {
